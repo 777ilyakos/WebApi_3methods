@@ -43,7 +43,7 @@
 
 
 ## Требования к присылаемым решениям:
-+	.NET 5- [ ]
++	.NET 5.
 +	WebApi
 +	Swagger
 +	PostgreSQL 

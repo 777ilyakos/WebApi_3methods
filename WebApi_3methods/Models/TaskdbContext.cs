@@ -13,7 +13,7 @@ namespace WebApi_3methods.Models
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=OMEGA003\SQLEXPRESS;Database=Taskdb;User Id=исп-41;Password=1234567890;");
+            optionsBuilder.UseSqlServer(@"Server=OMEGA003\SQLEXPRESS;Database=Taskdb;User=исп-41;Password=1234567890;Encrypt=false");
         }
     }
 }

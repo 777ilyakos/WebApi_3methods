@@ -25,36 +25,58 @@ namespace WebApi_3methods.Services
         /// <returns>возвращает ошибку или null если ошибок не было</returns>
         public static string SetFile(in IFormFile file)
         {
-            int fileId=0;//id файла в базе данных
-            try 
+            Models.Results result; //статистика текущего файла
+            int fileId;   //id файла в базе данных
+
+            
+            try
             {
+                //узнаём fileId и создаём result
                 using (TaskdbContext db = new TaskdbContext())
                 {
-                    
-                    string fileName=file.FileName;
+                    string fileName = file.FileName;
                     var files = db.Files.Where(i => i.FileName == fileName);
                     if (files.Count() > 0)
                     {
                         fileId = files.First().Id;
+                        result = files.First().results;
                     }
                     else
                     {
-                        //клац клац
+                        //записываем файл в базу
+                        Files file1 = new Files();
+                        result = new Models.Results();
+                        file1.FileName = file.FileName;
+                        result.File = file1;
+                        file1.results = result;
+                        db.Files.Add(file1);
+                        files = db.Files.Where(i => i.FileName == fileName);
+                        fileId = files.First().Id;
+                        db.SaveChanges();
                     }
                 }
-                    //открываем файл
-                    Stream streamReaderFile = file.OpenReadStream();
+
+
+                //открываем файл
+                List<Values> values = new();//лист значений из файла
+                Stream streamReaderFile = file.OpenReadStream();
                 using (TextFieldParser fieldParser = new TextFieldParser(streamReaderFile))
                 {
-                    fieldParser.TextFieldType= FieldType.Delimited;
+                    fieldParser.TextFieldType = FieldType.Delimited;
                     fieldParser.SetDelimiters(";");
+
                     while (!fieldParser.EndOfData)
                     {
-                        //клац клац
+                        
                     }
                 }
+
+
+                db.Values.AddRange();
+                db.SaveChanges();
+
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 return e.Message;
             }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.FileIO;
+using System.Runtime.CompilerServices;
 using WebApi_3methods.Models;
 
 namespace WebApi_3methods.Services
@@ -8,11 +9,11 @@ namespace WebApi_3methods.Services
     {
         static TaskdbContext db = new TaskdbContext();
         /// <summary>
-        /// записывает файл в базу данных:
-        /// 
-        /// его стоки преобразовываются и записываются в Value,
-        /// всю статистику в Result;
-        /// 
+        /// записывает файл в базу данных:<br/>
+        /// <br/>
+        /// его стоки преобразовываются и записываются в Value<br/>
+        /// всю статистику в Result<br/>
+        /// <br/>
         /// если файл уже был ранее то перезаписываем
         /// </summary>
         /// <param name="file">
@@ -28,7 +29,7 @@ namespace WebApi_3methods.Services
             Models.Results result; //статистика текущего файла
             int fileId;   //id файла в базе данных
 
-            
+
             try
             {
                 //узнаём fileId и создаём result
@@ -67,7 +68,7 @@ namespace WebApi_3methods.Services
 
                     while (!fieldParser.EndOfData)
                     {
-                        
+
                     }
                 }
 
@@ -81,6 +82,37 @@ namespace WebApi_3methods.Services
                 return e.Message;
             }
             return null;
+        }
+        /// <summary>
+        /// Дата и время в формате <br/>
+        /// ГГГГ-ММ-ДД_чч-мм-сс<br/>
+        /// пример:<br/>
+        /// 2022-03-18_09-18-17<br/>
+        /// </summary>
+        /// <param name="stringDateTime">дата в строке "yyyy-MM-dd_HH-mm-ss"</param>
+        /// <returns></returns>
+        static DateTime ToDataTime(string stringDateTime, DateTime minDate, DateTime maxDate)
+        {
+            try
+            {
+                DateTime myDate = DateTime.ParseExact(stringDateTime, "yyyy-MM-dd_HH-mm-ss", null);
+                if (myDate < maxDate && myDate > minDate)
+                {
+                    return myDate;
+                }
+                else 
+                {
+                throw (new Exception($"{myDate.ToString("yyyy-MM-dd HH:mm:ss")} дата находится за пределами диапозона "+
+                    $"\"{minDate.ToString("yyyy-MM-dd HH:mm:ss")}\"-\"{maxDate.ToString("yyyy-MM-dd HH:mm:ss")}\""));
+
+                }
+            }
+            catch
+            {
+                throw (new Exception($"{stringDateTime} не удалось преобразовать в дату и время(DateTime)"));
+            }
+
+
         }
     }
 }

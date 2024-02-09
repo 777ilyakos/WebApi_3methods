@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic;
+﻿using Microsoft.SqlServer.Server;
+using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.FileIO;
 using System.Runtime.CompilerServices;
 using WebApi_3methods.Models;
@@ -7,11 +8,11 @@ namespace WebApi_3methods.Services
 {
     public class task
     {
-        static TaskdbContext db = new TaskdbContext();
+       
         /// <summary>
         /// записывает файл в базу данных:<br/>
         /// <br/>
-        /// его стоки преобразовываются и записываются в Value<br/>
+        /// его строки преобразовываются и записываются в Value<br/>
         /// всю статистику в Result<br/>
         /// <br/>
         /// если файл уже был ранее то перезаписываем
@@ -58,8 +59,8 @@ namespace WebApi_3methods.Services
                 }
 
 
-                //открываем файл
-                List<Values> values = new();//лист значений из файла
+                //открываем файл и формируем из него лист значений
+                List<Values> values = new();//лист значений
                 Stream streamReaderFile = file.OpenReadStream();
                 using (TextFieldParser fieldParser = new TextFieldParser(streamReaderFile))
                 {
@@ -68,14 +69,49 @@ namespace WebApi_3methods.Services
 
                     while (!fieldParser.EndOfData)
                     {
+                        string[] fields = fieldParser.ReadFields();//поля одной строки
+                        Values value = new();
+                        value.FileId = fileId;
+                        //дата
+                        value.DateTime = ToDataTime(fields[0], new DateTime(2000, 01, 01), DateTime.Now);
+                        //время
+                        if (int.TryParse(fields[1], out int time) && (time >= 0))
+                        {
+                            value.Time = time;
+                        }
+                        else
+                        {
+                            return $"{string.Join(';',fields)} не удалось выделить целочисленное значение времени в секундах (время не может быть меньше 0)";
+                        }
+                        //Показатель
+                        if (double.TryParse(fields[2], out double score) && (score >= 0))
+                        {
+                            value.Value = score;
+                        }
+                        else
+                        {
+                            return $"{string.Join(';', fields)} не удалось показатель в виде числа с плавающей запятой (Значение показателя не может быть меньше 0)";
+                        }
 
+                        values.Add(value);
                     }
                 }
+                //доделать
+
+                //доделать
+
+                //доделать
+
+                //доделать
+
+                //доделать
 
 
-                db.Values.AddRange();
+                //записываем результат и значения в базуданных
+                TaskdbContext db = new TaskdbContext();
+                db.Values.AddRange(values);
                 db.SaveChanges();
-
+                
             }
             catch (Exception e)
             {
@@ -84,16 +120,16 @@ namespace WebApi_3methods.Services
             return null;
         }
         /// <summary>
-        /// празует строку в дату и проверяет на то находится ли дата в заданном диапозоне<br/>
+        /// преобразует строку в дату и проверяет на то находится ли дата в заданном диапазоне<br/>
         /// <br/>
-        /// в случае неудачи преобразования или не поподания даты в диапозон выдаёт ошибку
+        /// в случае неудачи преобразования или не попадания даты в диапазон выдаёт ошибку
         /// </summary>
         /// <param name="stringDateTime">строка требующая преобразования</param>
-        /// <param name="minDate">минимальная дата для диапозона</param>
-        /// <param name="maxDate">максимальная дата для диапозона</param>
+        /// <param name="minDate">минимальная дата для диапазона</param>
+        /// <param name="maxDate">максимальная дата для диапазона</param>
         /// <param name="format">формат даты</param>
         /// <returns></returns>
-        static DateTime ToDataTime(string stringDateTime, DateTime minDate, DateTime maxDate, string format= "yyyy-MM-dd_HH-mm-ss")
+        static DateTime ToDataTime(string stringDateTime, DateTime minDate, DateTime maxDate, string format = "yyyy-MM-dd_HH-mm-ss")
         {
             try
             {
@@ -102,16 +138,16 @@ namespace WebApi_3methods.Services
                 {
                     return myDate;
                 }
-                else 
+                else
                 {
-                throw (new Exception($"{myDate.ToString("yyyy-MM-dd HH:mm:ss")} дата находится за пределами диапозона "+
-                    $"\"{minDate.ToString("yyyy-MM-dd HH:mm:ss")}\"-\"{maxDate.ToString("yyyy-MM-dd HH:mm:ss")}\""));
+                    throw (new Exception($"{myDate.ToString("yyyy-MM-dd HH:mm:ss")} дата находится за пределами диапазона " +
+                        $"\"{minDate.ToString("yyyy-MM-dd HH:mm:ss")}\"-\"{maxDate.ToString("yyyy-MM-dd HH:mm:ss")}\""));
 
                 }
             }
             catch
             {
-                throw (new Exception($"{stringDateTime} не удалось преобразовать в дату и время(DateTime) в сооттветствии с форматом {format}"));
+                throw (new Exception($"{stringDateTime} не удалось преобразовать в дату и время(DateTime) в соответствии с форматом {format}"));
             }
 
 

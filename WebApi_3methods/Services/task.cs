@@ -84,18 +84,20 @@ namespace WebApi_3methods.Services
             return null;
         }
         /// <summary>
-        /// Дата и время в формате <br/>
-        /// ГГГГ-ММ-ДД_чч-мм-сс<br/>
-        /// пример:<br/>
-        /// 2022-03-18_09-18-17<br/>
+        /// празует строку в дату и проверяет на то находится ли дата в заданном диапозоне<br/>
+        /// <br/>
+        /// в случае неудачи преобразования или не поподания даты в диапозон выдаёт ошибку
         /// </summary>
-        /// <param name="stringDateTime">дата в строке "yyyy-MM-dd_HH-mm-ss"</param>
+        /// <param name="stringDateTime">строка требующая преобразования</param>
+        /// <param name="minDate">минимальная дата для диапозона</param>
+        /// <param name="maxDate">максимальная дата для диапозона</param>
+        /// <param name="format">формат даты</param>
         /// <returns></returns>
-        static DateTime ToDataTime(string stringDateTime, DateTime minDate, DateTime maxDate)
+        static DateTime ToDataTime(string stringDateTime, DateTime minDate, DateTime maxDate, string format= "yyyy-MM-dd_HH-mm-ss")
         {
             try
             {
-                DateTime myDate = DateTime.ParseExact(stringDateTime, "yyyy-MM-dd_HH-mm-ss", null);
+                DateTime myDate = DateTime.ParseExact(stringDateTime, format, null);
                 if (myDate < maxDate && myDate > minDate)
                 {
                     return myDate;
@@ -109,7 +111,7 @@ namespace WebApi_3methods.Services
             }
             catch
             {
-                throw (new Exception($"{stringDateTime} не удалось преобразовать в дату и время(DateTime)"));
+                throw (new Exception($"{stringDateTime} не удалось преобразовать в дату и время(DateTime) в сооттветствии с форматом {format}"));
             }
 
 

@@ -8,7 +8,7 @@ namespace WebApi_3methods.Services
 {
     public class task
     {
-       
+
         /// <summary>
         /// записывает файл в базу данных:<br/>
         /// <br/>
@@ -37,24 +37,33 @@ namespace WebApi_3methods.Services
                 using (TaskdbContext db = new TaskdbContext())
                 {
                     string fileName = file.FileName;
-                    var files = db.Files.Where(i => i.FileName == fileName);
+                    IQueryable<Files> files = db.Files.Where(i => i.FileName == fileName);
                     if (files.Count() > 0)
                     {
+                        //берём данные по файлу из базы
                         fileId = files.First().Id;
-                        result = files.First().results;
+                        result = new Models.Results();
+                        result.Id= fileId;
+                        result.FilesId= fileId;
+                        //удаляем прошлые записи по файлу
+                        if (files.First().Values.Count != 0)
+                            db.Values.RemoveRange(files.First().Values);
+                        db.SaveChanges();
+
                     }
                     else
                     {
                         //записываем файл в базу
                         Files file1 = new Files();
                         result = new Models.Results();
+
                         file1.FileName = file.FileName;
-                        result.File = file1;
                         file1.results = result;
+
                         db.Files.Add(file1);
                         files = db.Files.Where(i => i.FileName == fileName);
-                        fileId = files.First().Id;
                         db.SaveChanges();
+                        fileId = files.First().Id;
                     }
                 }
 
@@ -81,7 +90,7 @@ namespace WebApi_3methods.Services
                         }
                         else
                         {
-                            return $"{string.Join(';',fields)} не удалось выделить целочисленное значение времени в секундах (время не может быть меньше 0)";
+                            return $"{string.Join(';', fields)} не удалось выделить целочисленное значение времени в секундах (время не может быть меньше 0)";
                         }
                         //Показатель
                         if (double.TryParse(fields[2], out double score) && (score >= 0))
@@ -96,22 +105,27 @@ namespace WebApi_3methods.Services
                         values.Add(value);
                     }
                 }
-                //доделать
-
-                //доделать
-
-                //доделать
-
-                //доделать
-
-                //доделать
+                //вычисление всего необходимого для результата
+                result.CountRecord = values.Count;
+                if (result.CountRecord < 1 || result.CountRecord > 1000)
+                {
+                    return $"количество записей в файле не коректно (1..1000)";
+                }
+                result.AverageValue = values.Average(s => s.Value);
+                result.AverageTime = values.Average(s => s.Time);
+                result.AllTime = new(0, 0, values.Sum(s => s.Time));
+                result.MinValue = values.Min(s => s.Value);
+                result.MaxValue = values.Max(s => s.Value);
 
 
                 //записываем результат и значения в базуданных
-                TaskdbContext db = new TaskdbContext();
-                db.Values.AddRange(values);
-                db.SaveChanges();
-                
+                using (TaskdbContext db = new TaskdbContext())
+                {
+                    db.Results.Update(result);
+                    db.Values.AddRange(values);
+                    db.SaveChanges();
+                }
+
             }
             catch (Exception e)
             {
@@ -129,7 +143,7 @@ namespace WebApi_3methods.Services
         /// <param name="maxDate">максимальная дата для диапазона</param>
         /// <param name="format">формат даты</param>
         /// <returns></returns>
-        static DateTime ToDataTime(string stringDateTime, DateTime minDate, DateTime maxDate, string format = "yyyy-MM-dd_HH-mm-ss")
+        static DateTime ToDataTime(in string stringDateTime, in DateTime minDate, in DateTime maxDate, in string format = "yyyy-MM-dd_HH-mm-ss")
         {
             try
             {
@@ -149,8 +163,6 @@ namespace WebApi_3methods.Services
             {
                 throw (new Exception($"{stringDateTime} не удалось преобразовать в дату и время(DateTime) в соответствии с форматом {format}"));
             }
-
-
         }
     }
 }

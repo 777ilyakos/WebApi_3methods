@@ -8,12 +8,12 @@ namespace WebApi_3methods.Models
         public DbSet<Results> Results { get; set; } = null!;  
         public TaskdbContext()
         {
-            Database.EnsureDeleted();
-            Database.EnsureCreated();
+            //Database.EnsureDeleted();
+            //Database.EnsureCreated();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=OMEGA003\SQLEXPRESS;Database=Taskdb;User=исп-41;Password=1234567890;Encrypt=false");
+            optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=Taskdb;User=исп-41;Password=1234567890;Encrypt=false");
         }
     }
 }

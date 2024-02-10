@@ -12,7 +12,7 @@ namespace WebApi_3methods.Controllers
         {
             //передаём файл в функцию, на основе этого отвечаем на запрос(Null--ok;NotNull--bad)
             var err = Services.task.SetFile(uploadedFile);
-            return err != null ? Ok() : BadRequest(err);
+            return err == null ? Ok() : BadRequest(err);
         }
     }
 }

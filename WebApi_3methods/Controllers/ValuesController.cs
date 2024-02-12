@@ -5,7 +5,7 @@ namespace WebApi_3methods.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class ValuesController : Controller
     {
         [HttpPost]
         public ActionResult<IFormFile> GetFile(IFormFile uploadedFile)

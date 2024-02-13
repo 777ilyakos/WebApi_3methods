@@ -4,7 +4,7 @@ using WebApi_3methods.Models;
 
 namespace WebApi_3methods.Services
 {
-    public class task
+    public class LoadFile
     {
 
         /// <summary>

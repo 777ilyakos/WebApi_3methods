@@ -18,7 +18,7 @@ namespace WebApi_3methods.Controllers
         public ActionResult GetResults(string? filename,
                                       DateTime? dateTimeStart, DateTime? dateTimeEnd,
                                       double? averageValueMax, double? averageValueMin,
-                                      int? averageTimeMax, int? averageTimeMin)
+                                      double? averageTimeMax, double? averageTimeMin)
         {
 
             return Json(dateTimeEnd);

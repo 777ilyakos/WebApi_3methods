@@ -1,4 +1,6 @@
-﻿namespace WebApi_3methods.Models
+﻿using System.Text.Json.Serialization;
+
+namespace WebApi_3methods.Models
 {
     public class Results
     {
@@ -13,6 +15,7 @@
         public int CountRecord { get; set; }
 
         public int FilesId { get; set; }
+        
         public Files Files { get; set; }
     }
 }

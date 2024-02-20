@@ -9,7 +9,8 @@ namespace WebApi_3methods.Services
     {
         private List<Models.Results> _results;
         /// <summary>
-        /// фильтр (по имени файла умеет работать с регулярными выражениями
+        /// фильтр (по имени файла умеет работать с регулярными выражениями) <br/>
+        /// фильтр применяется сразу
         /// </summary>
         public string FilterFileName
         {
@@ -20,7 +21,8 @@ namespace WebApi_3methods.Services
             }
         }
         /// <summary>
-        /// фильтр (задаёт минимальную дату для запуска первой операции)
+        /// фильтр (задаёт минимальную дату для запуска первой операции) <br/>
+        /// фильтр применяется сразу
         /// </summary>
         public DateTime FilterMinDateTime
         {
@@ -30,7 +32,8 @@ namespace WebApi_3methods.Services
             }
         }
         /// <summary>
-        /// фильтр (задаёт максимальную дату для запуска первой операции)
+        /// фильтр (задаёт максимальную дату для запуска первой операции) <br/>
+        /// фильтр применяется сразу
         /// </summary>
         public DateTime FilterMaxDateTime
         {
@@ -40,7 +43,8 @@ namespace WebApi_3methods.Services
             }
         }
         /// <summary>
-        /// фильтр (задаёт максимальный средний показатель)
+        /// фильтр (задаёт максимальный средний показатель) <br/>
+        /// фильтр применяется сразу
         /// </summary>
         public double FilterMaxAverageValue
         {
@@ -50,7 +54,8 @@ namespace WebApi_3methods.Services
             }
         }
         /// <summary>
-        /// фильтр (задаёт минимальный средний показатель)
+        /// фильтр (задаёт минимальный средний показатель) <br/>
+        /// фильтр применяется сразу
         /// </summary>
         public double FilterMinAverageValue
         {
@@ -60,7 +65,8 @@ namespace WebApi_3methods.Services
             }
         }
         /// <summary>
-        /// фильтр (задаёт максимальное среднее время)
+        /// фильтр (задаёт максимальное среднее время) <br/>
+        /// фильтр применяется сразу
         /// </summary>
         public double FilterMaxAverageTime
         {
@@ -70,7 +76,8 @@ namespace WebApi_3methods.Services
             }
         }
         /// <summary>
-        /// фильтр (задаёт минимальное среднее время)
+        /// фильтр (задаёт минимальное среднее время) <br/>
+        /// фильтр применяется сразу
         /// </summary>
         public double FilterMinAverageTime
         {
@@ -89,9 +96,13 @@ namespace WebApi_3methods.Services
             }
         }
 
+        /// <summary>
+        /// возращает отфильтрованый результат
+        /// </summary>
+        /// <returns>отсортированый список</returns>
         public List<Models.Results> ReturnResults()
         {
-            return _results.ToList().Ig;
+            return _results.ToList();
         }
     }
 }
